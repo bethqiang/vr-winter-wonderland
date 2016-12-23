@@ -96,30 +96,30 @@ WebVRConfig = {
 <script>
 // Setup three.js WebGL renderer. Note: Antialiasing is a big performance hit.
 // Only enable it if you actually need to.
-var renderer = new THREE.WebGLRenderer({antialias: true});
+const renderer = new THREE.WebGLRenderer({antialias: true});
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Append the canvas element created by the renderer to document body element.
 document.body.appendChild(renderer.domElement);
 
 // Create a three.js scene.
-var scene = new THREE.Scene();
+const scene = new THREE.Scene();
 
 // Create a three.js camera.
-var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
 
-var controls = new THREE.VRControls(camera);
+const controls = new THREE.VRControls(camera);
 controls.standing = true;
 controls.standing = true;
 
 // Apply VR stereo rendering to renderer.
-var effect = new THREE.VREffect(renderer);
+const effect = new THREE.VREffect(renderer);
 effect.setSize(window.innerWidth, window.innerHeight);
 
 
 // Add a repeating grid as a skybox.
-var boxSize = 5;
-var loader = new THREE.TextureLoader();
+const boxSize = 5;
+const loader = new THREE.TextureLoader();
 loader.load('img/box.png', onTextureLoaded);
 
 function onTextureLoaded(texture) {
@@ -127,8 +127,8 @@ function onTextureLoaded(texture) {
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(boxSize, boxSize);
 
-  var geometry = new THREE.BoxGeometry(boxSize, boxSize, boxSize);
-  var material = new THREE.MeshBasicMaterial({
+  const geometry = new THREE.BoxGeometry(boxSize, boxSize, boxSize);
+  const material = new THREE.MeshBasicMaterial({
     map: texture,
     color: 0x01BE00,
     side: THREE.BackSide
@@ -146,16 +146,16 @@ function onTextureLoaded(texture) {
 
 
 // Create a VR manager helper to enter and exit VR mode.
-var params = {
+const params = {
   hideButton: false, // Default: false.
   isUndistorted: false // Default: false.
 };
-var manager = new WebVRManager(renderer, effect, params);
+const manager = new WebVRManager(renderer, effect, params);
 
 // Create 3D objects.
-var geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-var material = new THREE.MeshNormalMaterial();
-var cube = new THREE.Mesh(geometry, material);
+const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+const material = new THREE.MeshNormalMaterial();
+const cube = new THREE.Mesh(geometry, material);
 
 // Position cube mesh to be right in front of you.
 cube.position.set(0, controls.userHeight, -1);
@@ -167,9 +167,9 @@ window.addEventListener('resize', onResize, true);
 window.addEventListener('vrdisplaypresentchange', onResize, true);
 
 // Request animation frame loop function
-var lastRender = 0;
+let lastRender = 0;
 function animate(timestamp) {
-  var delta = Math.min(timestamp - lastRender, 500);
+  const delta = Math.min(timestamp - lastRender, 500);
   lastRender = timestamp;
 
   // Apply rotation to cube mesh
@@ -189,7 +189,7 @@ function onResize(e) {
   camera.updateProjectionMatrix();
 }
 
-var vrDisplay;
+let vrDisplay;
 
 // Get the HMD, and if we're dealing with something that specifies
 // stageParameters, rearrange the scene.
@@ -207,11 +207,11 @@ function setupStage() {
 
 function setStageDimensions(stage) {
   // Make the skybox fit the stage.
-  var material = skybox.material;
+  const material = skybox.material;
   scene.remove(skybox);
 
   // Size the skybox according to the size of the actual stage.
-  var geometry = new THREE.BoxGeometry(stage.sizeX, boxSize, stage.sizeZ);
+  const geometry = new THREE.BoxGeometry(stage.sizeX, boxSize, stage.sizeZ);
   skybox = new THREE.Mesh(geometry, material);
 
   // Place it on the floor.

@@ -1,8 +1,7 @@
 {
-  "name": "webvr-boilerplate",
-  "version": "0.4.9",
-  "description": "A starting point for web-based VR experiences that work in both Cardboard and Oculus.",
-  "main": "build/webvr-manager.js",
+  "name": "vr-winter-wonderland",
+  "version": "1.0.0",
+  "description": "A basic VR experience, filled with the goodies of winter.",
   "directories": {
     "test": "test"
   },
@@ -25,15 +24,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/borismus/webvr-boilerplate.git"
+    "url": "git+https://github.com/bethqiang/vr-winter-wonderland.git"
   },
   "keywords": [
     "vr"
   ],
-  "author": "Boris Smus",
+  "author": "Beth Qiang",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/borismus/webvr-boilerplate/issues"
+    "url": "https://github.com/bethqiang/vr-winter-wonderland/issues"
   },
-  "homepage": "https://github.com/borismus/webvr-boilerplate#readme"
+  "homepage": "https://github.com/bethqiang/vr-winter-wonderland#readme"
 }
