@@ -12,7 +12,7 @@
 body {
   width: 100%;
   height: 100%;
-  background-color: #000;
+  background-color: #2e4aa5;
   color: #fff;
   margin: 0px;
   padding: 0;
@@ -96,7 +96,8 @@ WebVRConfig = {
 <script>
 // Setup three.js WebGL renderer. Note: Antialiasing is a big performance hit.
 // Only enable it if you actually need to.
-const renderer = new THREE.WebGLRenderer({antialias: true});
+const renderer = new THREE.WebGLRenderer({ antialias: false });
+renderer.setClearColor(0x2e4aa5);
 renderer.setPixelRatio(window.devicePixelRatio);
 
 // Append the canvas element created by the renderer to document body element.
@@ -116,34 +117,9 @@ controls.standing = true;
 const effect = new THREE.VREffect(renderer);
 effect.setSize(window.innerWidth, window.innerHeight);
 
-
-// Add a repeating grid as a skybox.
-const boxSize = 5;
-const loader = new THREE.TextureLoader();
-loader.load('img/box.png', onTextureLoaded);
-
-function onTextureLoaded(texture) {
-  texture.wrapS = THREE.RepeatWrapping;
-  texture.wrapT = THREE.RepeatWrapping;
-  texture.repeat.set(boxSize, boxSize);
-
-  const geometry = new THREE.BoxGeometry(boxSize, boxSize, boxSize);
-  const material = new THREE.MeshBasicMaterial({
-    map: texture,
-    color: 0x01BE00,
-    side: THREE.BackSide
-  });
-
-  // Align the skybox to the floor (which is at y=0).
-  skybox = new THREE.Mesh(geometry, material);
-  skybox.position.y = boxSize/2;
-  scene.add(skybox);
-
-  // For high end VR devices like Vive and Oculus, take into account the stage
-  // parameters provided.
-  setupStage();
-}
-
+// For high end VR devices like Vive and Oculus, take into account the stage
+// parameters provided.
+setupStage();
 
 // Create a VR manager helper to enter and exit VR mode.
 const params = {
@@ -165,6 +141,20 @@ scene.add(cube);
 
 window.addEventListener('resize', onResize, true);
 window.addEventListener('vrdisplaypresentchange', onResize, true);
+
+// Add snowflakes to three.js scene
+// Add them as particles, NOT mesh - much more efficient
+const points = new THREE.Geometry;
+for (let i = 0; i < 1500; i++) {
+  let point = new THREE.Vector3();
+  point.x = THREE.Math.randFloatSpread(1000);
+  point.y = THREE.Math.randFloatSpread(1000);
+  point.z = THREE.Math.randFloatSpread(1000);
+  points.vertices.push(point);
+}
+const pointsMaterial = new THREE.PointsMaterial({ color: 0xeeeeee, size: 5 });
+const allPoints = new THREE.Points(points, pointsMaterial);
+scene.add(allPoints);
 
 // Request animation frame loop function
 let lastRender = 0;
@@ -197,29 +187,9 @@ function setupStage() {
   navigator.getVRDisplays().then(function(displays) {
     if (displays.length > 0) {
       vrDisplay = displays[0];
-      if (vrDisplay.stageParameters) {
-        setStageDimensions(vrDisplay.stageParameters);
-      }
       vrDisplay.requestAnimationFrame(animate);
     }
   });
-}
-
-function setStageDimensions(stage) {
-  // Make the skybox fit the stage.
-  const material = skybox.material;
-  scene.remove(skybox);
-
-  // Size the skybox according to the size of the actual stage.
-  const geometry = new THREE.BoxGeometry(stage.sizeX, boxSize, stage.sizeZ);
-  skybox = new THREE.Mesh(geometry, material);
-
-  // Place it on the floor.
-  skybox.position.y = boxSize/2;
-  scene.add(skybox);
-
-  // Place the cube in the middle of the scene, at user height.
-  cube.position.set(0, controls.userHeight, 0);
 }
 
 </script>
