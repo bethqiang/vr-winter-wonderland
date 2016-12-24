@@ -51,16 +51,16 @@ window.addEventListener('vrdisplaypresentchange', onResize, true);
 // Add snowflakes to three.js scene
 // Add them as particles, NOT mesh - much more efficient
 const points = new THREE.Geometry;
-for (let i = 0; i < 1500; i++) {
+for (let i = 0; i < 2000; i++) {
   let point = new THREE.Vector3();
   point.x = THREE.Math.randFloatSpread(500);
   point.y = THREE.Math.randFloatSpread(500);
   point.z = THREE.Math.randFloatSpread(500);
   points.vertices.push(point);
 }
-const pointsMaterial = new THREE.PointsMaterial({ color: 0xeeeeee, size: 4 });
-const allPoints = new THREE.Points(points, pointsMaterial);
-scene.add(allPoints);
+const pointsMaterial = new THREE.PointsMaterial({ color: 0xeeeeee, size: 3 });
+const pointsSystem = new THREE.Points(points, pointsMaterial);
+scene.add(pointsSystem);
 
 // Request animation frame loop function
 let lastRender = 0;
@@ -71,6 +71,18 @@ function animate(timestamp) {
 
   // Apply rotation to cube mesh
   cube.rotation.y += delta * 0.0006;
+
+  // Animate points
+  const vertices = pointsSystem.geometry.vertices;
+  for (let i = 0; i < vertices.length; i++) {
+    const v = vertices[i];
+    if (v.y > -250) {
+      v.y -= delta * 0.03;
+    } else {
+      v.y = 250;
+    }
+  }
+  pointsSystem.geometry.verticesNeedUpdate = true;
 
   controls.update();
   // Render the scene through the manager.
