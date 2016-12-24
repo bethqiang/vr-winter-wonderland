@@ -17,7 +17,17 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 
 const controls = new THREE.VRControls(camera);
 controls.standing = true;
-controls.standing = true;
+
+// Create a three.js light
+const pointLight = new THREE.PointLight(0xffffff, 0.8);
+// set position
+pointLight.position.x = 0;
+pointLight.position.y = 10;
+pointLight.position.z = 0;
+scene.add(pointLight);
+
+var light = new THREE.AmbientLight( 0x404040 ); // soft white light
+scene.add( light );
 
 // Apply VR stereo rendering to renderer.
 const effect = new THREE.VREffect(renderer);
@@ -34,36 +44,49 @@ const params = {
 };
 const manager = new WebVRManager(renderer, effect, params);
 
-// Create 3D objects.
-const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
-const material = new THREE.MeshNormalMaterial();
-const cube = new THREE.Mesh(geometry, material);
+// Add ground
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(10000, 10000),
+  new THREE.MeshBasicMaterial({ color: 0xeeeeee })
+);
+ground.rotation.x -= Math.PI / 2;
+scene.add(ground);
 
-// Position cube mesh to be right in front of you.
-cube.position.set(0, controls.userHeight, -3);
+// Add snowman
+const bottomSphere = new THREE.Mesh(
+  new THREE.SphereGeometry(0.5, 20, 20),
+  new THREE.MeshLambertMaterial({ color: 0xeeeeee })
+);
+bottomSphere.position.set(0, 1, -4);
+scene.add(bottomSphere);
 
-// Add cube mesh to your three.js scene
-scene.add(cube);
+const middleSphere = new THREE.Mesh(
+  new THREE.SphereGeometry(0.4, 20, 20),
+  new THREE.MeshLambertMaterial({ color: 0xeeeeee })
+);
+middleSphere.position.set(0, 1.8, -4);
+scene.add(middleSphere);
+
+const topSphere = new THREE.Mesh(
+  new THREE.SphereGeometry(0.3, 20, 20),
+  new THREE.MeshLambertMaterial({ color: 0xeeeeee })
+);
+topSphere.position.set(0, 2.4, -4);
+scene.add(topSphere);
 
 window.addEventListener('resize', onResize, true);
 window.addEventListener('vrdisplaypresentchange', onResize, true);
 
 // Request animation frame loop function
-let lastRender = 0;
 let vrDisplay;
 
-function animate(timestamp) {
-  const delta = Math.min(timestamp - lastRender, 500);
-  lastRender = timestamp;
-
-  // Apply rotation to cube mesh
-  cube.rotation.y += delta * 0.0006;
+function animate() {
 
   animateSnow();
 
   controls.update();
   // Render the scene through the manager.
-  manager.render(scene, camera, timestamp);
+  manager.render(scene, camera);
   effect.render(scene, camera);
 
   vrDisplay.requestAnimationFrame(animate);
