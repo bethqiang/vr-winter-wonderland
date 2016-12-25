@@ -18,16 +18,13 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const controls = new THREE.VRControls(camera);
 controls.standing = true;
 
-// Create a three.js light
-const pointLight = new THREE.PointLight(0xffffff, 0.8);
-// set position
-pointLight.position.x = 0;
-pointLight.position.y = 10;
-pointLight.position.z = 0;
-scene.add(pointLight);
+var hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
+hemiLight.position.set(0, 500, 0);
+scene.add(hemiLight);
 
-var light = new THREE.AmbientLight( 0x404040 ); // soft white light
-scene.add( light );
+var dirLight = new THREE.DirectionalLight(0xffffff, 1);
+dirLight.position.set(-1, 0.75, 1);
+scene.add(dirLight);
 
 // Apply VR stereo rendering to renderer.
 const effect = new THREE.VREffect(renderer);
@@ -52,27 +49,27 @@ const ground = new THREE.Mesh(
 ground.rotation.x -= Math.PI / 2;
 scene.add(ground);
 
-// Add snowman
-const bottomSphere = new THREE.Mesh(
-  new THREE.SphereGeometry(0.5, 20, 20),
-  new THREE.MeshLambertMaterial({ color: 0xeeeeee })
-);
-bottomSphere.position.set(0, 1, -4);
-scene.add(bottomSphere);
+const JSONLoader = new THREE.JSONLoader();
+JSONLoader.load('../img/penguin/penguin.js', function(geometry, materials) {
+  const material = new THREE.MeshFaceMaterial(materials);
+  const object = new THREE.Mesh(geometry, material);
+  object.position.y = 1;
+  object.position.z = -2;
+  object.rotation.y -= Math.PI / 2;
+  object.scale.set(0.05, 0.05, 0.05);
+  scene.add(object);
+});
 
-const middleSphere = new THREE.Mesh(
-  new THREE.SphereGeometry(0.4, 20, 20),
-  new THREE.MeshLambertMaterial({ color: 0xeeeeee })
-);
-middleSphere.position.set(0, 1.8, -4);
-scene.add(middleSphere);
-
-const topSphere = new THREE.Mesh(
-  new THREE.SphereGeometry(0.3, 20, 20),
-  new THREE.MeshLambertMaterial({ color: 0xeeeeee })
-);
-topSphere.position.set(0, 2.4, -4);
-scene.add(topSphere);
+JSONLoader.load('../img/trees/winter-trees.js', function(geometry, materials) {
+  const material = new THREE.MeshFaceMaterial(materials);
+  const object = new THREE.Mesh(geometry, material);
+  object.position.y = 3.75;
+  object.position.z = -50;
+  object.position.x = -10;
+  object.rotation.y -= Math.PI / 2;
+  object.scale.set(2, 2, 2);
+  scene.add(object);
+});
 
 window.addEventListener('resize', onResize, true);
 window.addEventListener('vrdisplaypresentchange', onResize, true);
